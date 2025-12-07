@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # YOLOv8 Object Detection App
 
 A comprehensive Streamlit-based object detection application using YOLOv8 models from Ultralytics. This app provides an intuitive web interface for uploading images, detecting objects, and visualizing results with customizable settings.
