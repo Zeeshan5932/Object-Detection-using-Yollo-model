@@ -5,6 +5,7 @@ from PIL import Image
 from ultralytics import YOLO
 import streamlit as st
 import torch
+import gdown  # <-- added for Google Drive download
 
 # Fix for OpenMP and Streamlit compatibility (if needed)
 os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
@@ -18,6 +19,23 @@ st.set_page_config(
 
 st.title("🔍 YOLO Object Detection")
 st.markdown("Upload an image and detect objects using your YOLO model.")
+
+# ----------------------------
+# Google Drive Model Download
+# ----------------------------
+def download_model_from_drive(file_id: str, output_name: str = "yolo11n.pt"):
+    """
+    Downloads the model from Google Drive if it does not exist.
+    """
+    if not os.path.exists(output_name):
+        st.info("Downloading YOLO model from Google Drive... Please wait.")
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, output_name, quiet=False)
+    return output_name
+
+# Set your Google Drive file ID here
+GOOGLE_DRIVE_FILE_ID = "YOUR_FILE_ID_HERE"
+MODEL_FILE = download_model_from_drive(GOOGLE_DRIVE_FILE_ID)
 
 # Load YOLO model once
 @st.cache_resource
@@ -109,7 +127,7 @@ def main():
         st.session_state.converted_model_path = None
     
     # Model selection - initially only show the default model
-    model_options = {"Custom Model (yolo11n.pt)": "yolo11n.pt"}
+    model_options = {"Custom Model (yolo11n.pt)": MODEL_FILE}  # <-- use downloaded model
     
     # Only scan for ONNX models when they exist
     onnx_models = [f for f in os.listdir() if f.endswith(".onnx") and os.path.isfile(f)]
@@ -133,14 +151,14 @@ def main():
         model_path = model_options[selected_model]
         
         # Check if model file exists except for the default one
-        if model_path != "yolo11n.pt" and not os.path.exists(model_path):
+        if model_path != MODEL_FILE and not os.path.exists(model_path):
             st.warning(f"Model {model_path} not found. Will download it automatically when used.")
         
         # ONNX conversion section
         st.header("ONNX Conversion")
         
         # Get available PT models for conversion
-        available_pt_models = ["yolo11n.pt"] + [m for m in os.listdir() if m.endswith(".pt") and os.path.isfile(m) and m != "yolo11n.pt"]
+        available_pt_models = [MODEL_FILE] + [m for m in os.listdir() if m.endswith(".pt") and os.path.isfile(m) and m != MODEL_FILE]
         convert_model = st.selectbox(
             "Select Model to Convert", 
             available_pt_models
