@@ -1,13 +1,16 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-streamlit>=1.31.0
-ultralytics>=8.3.220
+streamlit==1.31.0
+ultralytics==8.2.103
 
-opencv-python-headless==4.12.0.88
+opencv-python-headless==4.8.1.78
 Pillow>=10.0.0
-torch==2.2.2
-torchvision==0.17.2
-onnx>=1.20.0
-onnxruntime==1.17.0
 numpy
+
+torch==2.2.0
+torchvision==0.17.0
+
+onnx==1.15.0
+onnxruntime==1.16.3
+
 
